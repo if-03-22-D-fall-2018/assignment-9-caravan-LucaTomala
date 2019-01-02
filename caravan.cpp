@@ -54,15 +54,25 @@ void delete_caravan(Caravan caravan)
       sfree(caravan);
       return;
     }
+    current = current->next;
   }
 }
 
 void add_pack_animal(Caravan caravan, PackAnimal animal)
 {
+    if(animal != 0 && get_caravan(animal) == 0)
+    {
+        caravan->animal = animal;
+        caravan->length++;
+    }
 }
 
 void remove_pack_animal(Caravan caravan, PackAnimal animal)
 {
+  if (caravan != 0) {
+    caravan->length--;
+    caravan->animal = 0;
+  }
 }
 
 int get_caravan_load(Caravan caravan)
@@ -72,9 +82,15 @@ int get_caravan_load(Caravan caravan)
 
 void unload(Caravan caravan)
 {
+
 }
 
 int get_caravan_speed(Caravan caravan)
 {
   return 0;
+}
+
+void optimize_load(Caravan caravan)
+{
+
 }
