@@ -16,73 +16,114 @@
 
 #define COUNT_CARAVANS 5
 
-struct CaravanImplementation
+typedef struct NodeImplementation* Node;
+
+struct NodeImplementation
 {
-  int length;
-  PackAnimal animal;
-  struct CaravanImplementation* next;
+    PackAnimal animal;
+    struct NodeImplementation* next;
 };
 
-Caravan head = (Caravan)malloc(sizeof(struct CaravanImplementation));
+struct CaravanImplementation{
+    int length;
+    Node head = (Node)malloc(sizeof(struct NodeImplementation));
+};
 
 Caravan new_caravan()
 {
-    head->length = 0;
-    head->animal = 0;
-    head->next = 0;
-    return head;
+  Caravan caravan =(Caravan)malloc(sizeof(struct CaravanImplementation));
+  caravan->length = 0;
+  return caravan;
 }
 
 int get_length(Caravan caravan)
 {
-  return head->length;
+  return caravan->length;
 }
 
 void delete_caravan(Caravan caravan)
 {
-  Caravan current = head;
-  while (current!=0)
+  Node current = caravan->head;
+  while(current != 0)
   {
-    if (caravan == head)
-    {
-      sfree(head);
-      return;
-    }
-    else if (caravan == current->next)
-    {
-      current->next = caravan->next;
-      sfree(caravan);
-      return;
-    }
-    current = current->next;
+        delete_animal(current->animal);
+        current = current->next;
   }
+  sfree(caravan);
 }
 
 void add_pack_animal(Caravan caravan, PackAnimal animal)
 {
-    if(animal != 0 && get_caravan(animal) == 0)
-    {
-        caravan->animal = animal;
-        caravan->length++;
+  if (animal == 0) return;
+  Node current = caravan->head;
+  Node new_node = (Node)malloc(sizeof(struct NodeImplementation));
+  new_node->animal = animal;
+  new_node->next = 0;
+
+  if (caravan->head == 0) {
+    caravan->head = new_node;
+    add_to_caravan(animal, caravan);
+    caravan->length++;
+  }
+
+  else{
+    while (current->next != 0 && animal != current->animal) {
+      current = current->next;
     }
+    if (animal == current->animal) return;
+      current->next = new_node;
+      add_to_caravan(animal, caravan);
+      caravan->length++;
+}
 }
 
 void remove_pack_animal(Caravan caravan, PackAnimal animal)
 {
-  if (caravan != 0) {
-    caravan->length--;
-    caravan->animal = 0;
+  if (animal != 0)
+  {
+    Node current = caravan->head;
+    Node prev;
+    if (current != 0 && current->animal == animal) {
+      caravan->head = current->next;
+      sfree(current);
+      remove_from_caravan(animal, caravan);
+      caravan->length--;
+      return;
+    }
+
+    while (current != 0 && current->animal != animal ) {
+      prev = current;
+      current=current->next;
+    }
+
+    if (current==0) return;
+      prev->next = current->next;
+      sfree(current);
+      remove_from_caravan(animal, caravan);
+      caravan->length --;
   }
 }
 
 int get_caravan_load(Caravan caravan)
 {
-  return 0;
+  Node current = caravan->head;
+  int load = 0;
+  while (current!=0)
+  {
+    load = load + get_load(current->animal);
+    current = current->next;
+  }
+  return load;
 }
 
 void unload(Caravan caravan)
 {
-
+  Node current = caravan->head;
+  while (current!= 0)
+  {
+    unload(current->animal);
+    current = current->next;
+  }
 }
 
 int get_caravan_speed(Caravan caravan)
