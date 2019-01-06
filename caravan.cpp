@@ -46,8 +46,8 @@ void delete_caravan(Caravan caravan)
   Node current = caravan->head;
   while(current != 0)
   {
-        delete_animal(current->animal);
-        current = current->next;
+      delete_animal(current->animal);
+      current = current->next;
   }
   sfree(caravan);
 }
@@ -82,7 +82,7 @@ void remove_pack_animal(Caravan caravan, PackAnimal animal)
   if (animal != 0)
   {
     Node current = caravan->head;
-    Node prev;
+
     if (current != 0 && current->animal == animal) {
       caravan->head = current->next;
       sfree(current);
@@ -90,14 +90,15 @@ void remove_pack_animal(Caravan caravan, PackAnimal animal)
       caravan->length--;
       return;
     }
-
+    Node now;
     while (current != 0 && current->animal != animal ) {
-      prev = current;
+      now = current;
       current=current->next;
     }
 
-    if (current==0) return;
-      prev->next = current->next;
+    if (current==0)
+    {return;}
+      now->next = current->next;
       sfree(current);
       remove_from_caravan(animal, caravan);
       caravan->length --;
